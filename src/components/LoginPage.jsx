@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   Form,
   Input,
@@ -9,6 +9,7 @@ import {
   Typography,
   Space,
   Divider,
+  message,
 } from "antd";
 import {
   UserOutlined,
@@ -17,20 +18,29 @@ import {
   GoogleOutlined,
   GithubOutlined,
 } from "@ant-design/icons";
+import { apiClient, API_ENDPOINTS } from "../config/api";
 
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      console.log("Login attempt with:", values);
-      // Add your login logic here
+      const response = await apiClient.post(API_ENDPOINTS.auth.login, values);
+      message.success("Login successful!");
+      console.log("Login response:", response);
+
+      // Redirect to the attempted page or dashboard
+      const from = location.state?.from?.pathname || "/dashboard";
+      navigate(from, { replace: true });
     } catch (error) {
-      console.error("Login failed:", error);
+      message.error(error.message || "Login failed. Please try again.");
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -96,9 +106,9 @@ const LoginPage = () => {
 
           <Form.Item>
             <div className="flex justify-between items-center">
-              <Form.Item name="remember" valuePropName="checked" noStyle>
+              {/* <Form.Item name="remember" valuePropName="checked" noStyle>
                 <Checkbox>Remember me</Checkbox>
-              </Form.Item>
+              </Form.Item> */}
               <Link
                 to="/forgot-password"
                 className="text-indigo-600 hover:text-indigo-500 font-medium"
