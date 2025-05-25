@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { Spin } from "antd";
-import { apiClient, API_ENDPOINTS } from "../config/api";
+import { apiClient, API_ENDPOINTS } from "../lib/api";
 
 const ProtectedLayout = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,7 +26,7 @@ const ProtectedLayout = () => {
   if (isLoading) {
     return (
       <div className="h-screen w-screen flex items-center justify-center">
-        <Spin size="large" />
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
