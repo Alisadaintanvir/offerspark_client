@@ -9,6 +9,7 @@ import LoginPage from "../pages/auth/LoginPage";
 
 // Dashboard Pages
 import Dashboard from "../features/dashboard/page/Dashboard";
+import UsersPage from "../features/user/page/UsersPage";
 
 const AppRoutes = () => {
   return (
@@ -23,6 +24,7 @@ const AppRoutes = () => {
         <Route element={<SidebarLayout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/users" element={<UsersPage />} />
         </Route>
       </Route>
     </Routes>

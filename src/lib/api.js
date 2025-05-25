@@ -14,12 +14,14 @@ export const API_ENDPOINTS = {
     login: "/auth/login",
     register: "/auth/register",
     me: "/auth/me",
+    logout: "/auth/logout",
     forgotPassword: "/auth/forgot-password",
     resetPassword: "/auth/reset-password",
   },
   user: {
     profile: "/user/profile",
     updateProfile: "/user/profile",
+    list: "/user/list",
   },
   // Add more endpoint categories as needed
 };

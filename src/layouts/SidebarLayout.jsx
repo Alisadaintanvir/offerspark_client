@@ -10,7 +10,8 @@ import {
   Settings,
   UserCircle,
 } from "lucide-react";
-import SidebarNav from "../components/SidebarNav";
+import SidebarNav from "../components/sidebar/SidebarNav";
+import apiClient, { API_ENDPOINTS } from "../lib/api";
 
 const SidebarLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,13 +22,13 @@ const SidebarLayout = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleLogout = () => {
-    // Add your logout logic here
-    // For example:
-    // localStorage.removeItem('token');
-    // or
-    // await authService.logout();
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      await apiClient.post(API_ENDPOINTS.auth.logout);
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
 
   return (

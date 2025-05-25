@@ -17,17 +17,17 @@ import {
 const navItems = [
   {
     title: "Dashboard",
-    href: "/admin/dashboard",
+    href: "/dashboard",
     icon: LayoutDashboard,
   },
   {
     title: "Users",
-    href: "/admin/users",
+    href: "/users",
     icon: Users,
   },
   {
-    title: "Products",
-    href: "/admin/products",
+    title: "Roles",
+    href: "/roles",
     icon: ShoppingBag,
   },
   {
