@@ -34,12 +34,13 @@ const SidebarLayout = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="fixed top-0 right-0 left-0 h-16 bg-white shadow-sm z-30 lg:left-64">
+      <header className="fixed top-0 right-0 left-0 h-16 bg-white shadow-sm z-50 lg:left-64">
         <div className="flex items-center justify-between h-full px-4">
           {/* Left side - Mobile menu button */}
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-md lg:hidden hover:bg-gray-100"
+            className="p-2 rounded-md text-gray-600 hover:bg-gray-100 lg:hidden relative z-50"
+            aria-label="Toggle menu"
           >
             {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -58,24 +59,19 @@ const SidebarLayout = () => {
 
           {/* Right side - User menu */}
           <div className="flex items-center space-x-4">
-            <button className="p-2 rounded-full hover:bg-gray-100 relative">
+            <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full">
               <Bell size={20} />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
             </button>
             <div className="relative">
               <button
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center space-x-2 hover:bg-gray-100 p-2 rounded-lg"
+                className="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg"
               >
-                <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                   <User size={20} className="text-gray-600" />
                 </div>
-                <span className="hidden md:block text-sm font-medium">
-                  Admin User
-                </span>
               </button>
 
-              {/* User Dropdown Menu */}
               {isUserMenuOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-50">
                   <div className="px-4 py-2 border-b">
@@ -134,7 +130,7 @@ const SidebarLayout = () => {
       {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-30 lg:hidden"
           onClick={toggleSidebar}
         />
       )}

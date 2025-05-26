@@ -23,6 +23,15 @@ export const API_ENDPOINTS = {
     updateProfile: "/user/profile",
     list: "/user/list",
   },
+  permission: {
+    list: "/permissions",
+  },
+  role: {
+    list: "/roles",
+    create: "/roles",
+    update: "/roles/:id",
+    delete: "/roles/:id",
+  },
   // Add more endpoint categories as needed
 };
 
@@ -72,6 +81,14 @@ export const apiClient = {
     return this.request(endpoint, {
       ...options,
       method: "PUT",
+      body: JSON.stringify(data),
+    });
+  },
+
+  patch(endpoint, data, options = {}) {
+    return this.request(endpoint, {
+      ...options,
+      method: "PATCH",
       body: JSON.stringify(data),
     });
   },
