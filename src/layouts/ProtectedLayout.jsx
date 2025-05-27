@@ -1,27 +1,10 @@
-import React, { useEffect, useState } from "react";
 import { Navigate, useLocation, Outlet } from "react-router-dom";
-import { apiClient, API_ENDPOINTS } from "../lib/api";
+import { useAuthStore } from "../store/authStore";
 
 const ProtectedLayout = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const location = useLocation();
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await apiClient.get(API_ENDPOINTS.auth.me);
-        setIsAuthenticated(true);
-      } catch (error) {
-        console.error("Authentication check failed:", error);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
 
   if (isLoading) {
     return (
