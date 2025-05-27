@@ -1,40 +1,46 @@
-// import { useLocation } from "react-router-dom";
+import { useLocation, Navigate } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 
-// const ProtectedRoute = ({ children, requiredRoles }) => {
-//   const { user, isAuthenticated, isLoading } = useAuth(); // isLoading is important to prevent premature redirects
-//   const location = useLocation();
+const ProtectedRoute = ({ children, requiredRoles }) => {
+  const isLoading = useAuthStore((state) => state.isLoading);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const user = useAuthStore((state) => state.user);
 
-//   if (isLoading) {
-//     // Show a loading spinner or a blank page while auth state is being determined
-//     return <div>Loading authentication status...</div>; // Or a proper loading component
-//   }
+  const location = useLocation();
 
-//   if (!isAuthenticated) {
-//     // User not logged in, redirect to login page
-//     // Pass the current location so we can redirect back after login
-//     return <Navigate to="/login" state={{ from: location }} replace />;
-//   }
+  if (isLoading)
+    return (
+      <div className="h-screen w-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
 
-//   // Check if the route requires specific roles and if the user has one of them
-//   if (requiredRoles && requiredRoles.length > 0) {
-//     // Assuming user object has a 'role' property e.g., user.role = 'admin'
-//     // Or user.roles = ['admin', 'editor'] if a user can have multiple roles
-//     const userHasRequiredRole = requiredRoles.some(
-//       (role) => user.role === role
-//     ); // Adjust if user.roles is an array
+  if (!isAuthenticated) {
+    // User not logged in, redirect to login page
+    // Pass the current location so we can redirect back after login
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
 
-//     if (!userHasRequiredRole) {
-//       // User does not have the required role, redirect to an unauthorized page or dashboard
-//       // You might want to show a specific "Access Denied" page
-//       return (
-//         <Navigate to="/dashboard" state={{ error: "unauthorized" }} replace />
-//       );
-//       // Or: return <Navigate to="/unauthorized" replace />;
-//     }
-//   }
+  // Check if the route requires specific roles and if the user has one of them
+  if (requiredRoles && requiredRoles.length > 0) {
+    // Assuming user object has a 'role' property e.g., user.role = 'admin'
+    // Or user.roles = ['admin', 'editor'] if a user can have multiple roles
+    const userHasRequiredRole = requiredRoles.some(
+      (role) => user.role === role
+    ); // Adjust if user.roles is an array
 
-//   // User is authenticated and has the required role (if any)
-//   return children;
-// };
+    if (!userHasRequiredRole) {
+      // User does not have the required role, redirect to an unauthorized page or dashboard
+      // You might want to show a specific "Access Denied" page
+      return (
+        <Navigate to="/dashboard" state={{ error: "unauthorized" }} replace />
+      );
+      // Or: return <Navigate to="/unauthorized" replace />;
+    }
+  }
 
-// export default ProtectedRoute;
+  // User is authenticated and has the required role (if any)
+  return children;
+};
+
+export default ProtectedRoute;

@@ -13,7 +13,7 @@ import {
 import SidebarNav from "../components/sidebar/SidebarNav";
 import apiClient, { API_ENDPOINTS } from "../lib/api";
 
-const SidebarLayout = () => {
+const SidebarLayout = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -122,9 +122,7 @@ const SidebarLayout = () => {
 
       {/* Main Content */}
       <main className="pt-16 lg:pl-64 min-h-screen">
-        <div className="p-4 lg:p-8">
-          <Outlet />
-        </div>
+        <div className="p-4 lg:p-8">{children}</div>
       </main>
 
       {/* Overlay for mobile */}
