@@ -8,44 +8,6 @@ import {
   deleteRole,
 } from "../services/roleService";
 
-// Dummy data for roles (fallback)
-const dummyRoles = [
-  {
-    id: 1,
-    name: "Administrator",
-    description: "Full access to all features and settings",
-    createdAt: "2024-01-01T00:00:00Z",
-    permissions: [
-      "151",
-      "152",
-      "153",
-      "154",
-      "161",
-      "162",
-      "163",
-      "164",
-      "171",
-      "172",
-      "173",
-      "174",
-    ],
-  },
-  {
-    id: 2,
-    name: "Editor",
-    description: "Can manage content and view users",
-    createdAt: "2024-01-15T00:00:00Z",
-    permissions: ["152", "162", "172"],
-  },
-  {
-    id: 3,
-    name: "Viewer",
-    description: "Can only view content",
-    createdAt: "2024-02-01T00:00:00Z",
-    permissions: ["152", "162", "172"],
-  },
-];
-
 const RolesPage = () => {
   const [roles, setRoles] = useState([]);
   const [permissions, setPermissions] = useState([]);
@@ -83,8 +45,6 @@ const RolesPage = () => {
         setRoles(data);
       } catch (err) {
         console.error("Error loading roles:", err);
-        // Fallback to dummy data if API fails
-        setRoles(dummyRoles);
       } finally {
         setLoading(false);
       }

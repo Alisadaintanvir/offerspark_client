@@ -19,9 +19,10 @@ export const API_ENDPOINTS = {
     resetPassword: "/auth/reset-password",
   },
   user: {
-    profile: "/user/profile",
-    updateProfile: "/user/profile",
-    list: "/user/list",
+    list: "/users",
+    create: "/users",
+    update: "/users/:id",
+    delete: "/users/:id",
   },
   permission: {
     list: "/permissions",

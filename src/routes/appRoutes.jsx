@@ -5,6 +5,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import Dashboard from "../features/dashboard/page/Dashboard";
 import UsersPage from "../features/user/page/UsersPage";
 import RolesPage from "../features/roles/page/RolesPage";
+import ErrorPage from "../features/user/components/ErrorPage";
 
 export const appRoutes = [
   // Authentication Routes (using AuthLayout)
@@ -18,21 +19,23 @@ export const appRoutes = [
     path: "/dashboard",
     element: <Dashboard />,
     layout: SidebarLayout,
-    isPublic: true,
-    // requiredRoles: [ROLES.ADMIN],
+    requiredRoles: [],
   },
   {
     path: "/users",
     element: <UsersPage />,
     layout: SidebarLayout,
-    isPublic: true,
-    // requiredRoles: [ROLES.ADMIN],
+    requiredRoles: [],
   },
   {
     path: "/roles",
     element: <RolesPage />,
     layout: SidebarLayout,
+    requiredRoles: [ROLES.ADMIN],
+  },
+  {
+    path: "/unauthorized",
+    element: <ErrorPage />,
     isPublic: true,
-    // requiredRoles: [ROLES.ADMIN],
   },
 ];
