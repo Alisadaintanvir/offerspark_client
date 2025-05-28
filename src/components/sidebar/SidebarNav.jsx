@@ -13,6 +13,8 @@ import {
   HelpCircle,
   User,
 } from "lucide-react";
+import { ROLES } from "../../lib/constants";
+import { useAuthStore } from "../../store/authStore";
 
 const navItems = [
   {
@@ -24,57 +26,34 @@ const navItems = [
     title: "Users",
     href: "/users",
     icon: Users,
+    requiredRoles: [ROLES.ADMIN],
   },
   {
     title: "Roles",
     href: "/roles",
     icon: ShoppingBag,
-  },
-  {
-    title: "Categories",
-    href: "/admin/categories",
-    icon: Tag,
-  },
-  {
-    title: "Analytics",
-    href: "/admin/analytics",
-    icon: BarChart,
-  },
-  {
-    title: "Reports",
-    href: "/admin/reports",
-    icon: FileText,
-  },
-  {
-    title: "Messages",
-    href: "/admin/messages",
-    icon: MessageSquare,
-  },
-  {
-    title: "Notifications",
-    href: "/admin/notifications",
-    icon: Bell,
-  },
-  {
-    title: "Settings",
-    href: "/admin/settings",
-    icon: Settings,
-  },
-  {
-    title: "Help & Support",
-    href: "/admin/help",
-    icon: HelpCircle,
+    requiredRoles: [ROLES.ADMIN],
   },
 ];
 
 const SidebarNav = () => {
   const location = useLocation();
+  const user = useAuthStore((state) => state.user);
+
+  const userRole = user?.role?.name || user?.role; // handles object or string
+  const isSuperAdmin = user?.is_super_admin;
+
+  const canView = (item) => {
+    if (!item.requiredRoles) return true; // Public item
+    if (isSuperAdmin || userRole === "admin") return true;
+    return item.requiredRoles.includes(userRole);
+  };
 
   return (
     <nav className="h-[calc(100vh-4rem)] overflow-y-auto">
       <div className="p-4">
         <ul className="space-y-1">
-          {navItems.map((item) => {
+          {navItems.filter(canView).map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
 
@@ -103,9 +82,11 @@ const SidebarNav = () => {
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">
-              Admin User
+              {user?.full_name || "Admin User"}
             </p>
-            <p className="text-xs text-gray-500 truncate">admin@example.com</p>
+            <p className="text-xs text-gray-500 truncate">
+              {user?.email || "admin@example.com"}
+            </p>
           </div>
         </div>
       </div>

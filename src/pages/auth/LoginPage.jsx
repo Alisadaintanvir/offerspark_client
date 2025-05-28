@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { apiClient, API_ENDPOINTS } from "../../lib/api";
+import { useAuthStore } from "../../store/authStore";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -9,6 +10,9 @@ const LoginPage = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
+
+  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -20,7 +24,9 @@ const LoginPage = () => {
         email,
         password,
       });
-      console.log("Login response:", response);
+
+      setIsAuthenticated(true);
+      setUser(response.data);
 
       // Redirect to the attempted page or dashboard
       const from = location.state?.from?.pathname || "/dashboard";
