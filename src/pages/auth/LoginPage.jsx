@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { apiClient, API_ENDPOINTS } from "../../lib/api";
+import { apiClient } from "../../lib/apiClient";
 import { useAuthStore } from "../../store/authStore";
+import API_ENDPOINTS from "../../lib/apiEndpoints";
 
 const LoginPage = () => {
   const [loading, setLoading] = useState(false);
@@ -20,13 +21,13 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await apiClient.post(API_ENDPOINTS.auth.login, {
+      const user = await apiClient.post(API_ENDPOINTS.auth.login, {
         email,
         password,
       });
 
       setIsAuthenticated(true);
-      setUser(response.data);
+      setUser(user);
 
       // Redirect to the attempted page or dashboard
       const from = location.state?.from?.pathname || "/dashboard";

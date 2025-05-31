@@ -1,3 +1,7 @@
+import axios from "axios";
+import { useAuthStore } from "@/store/authStore";
+import API_ENDPOINTS from "./apiEndpoints";
+
 // API Configuration
 const API_CONFIG = {
   baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/admin",
@@ -5,98 +9,71 @@ const API_CONFIG = {
   headers: {
     "Content-Type": "application/json",
   },
-  credentials: "include",
+  withCredentials: true,
 };
 
-// API Endpoints
-export const API_ENDPOINTS = {
-  auth: {
-    login: "/auth/login",
-    register: "/auth/register",
-    me: "/auth/me",
-    logout: "/auth/logout",
-    forgotPassword: "/auth/forgot-password",
-    resetPassword: "/auth/reset-password",
+// Create Axios instance
+const axiosInstance = axios.create(API_CONFIG);
+
+// Request interceptor to add access token
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = useAuthStore.getState().accessToken;
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+    return config;
   },
-  user: {
-    list: "/users",
-    create: "/users",
-    update: "/users/:id",
-    delete: "/users/:id",
-  },
-  permission: {
-    list: "/permissions",
-  },
-  role: {
-    list: "/roles",
-    create: "/roles",
-    update: "/roles/:id",
-    delete: "/roles/:id",
-  },
-  // Add more endpoint categories as needed
-};
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor to handle token refresh
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response &&
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+      try {
+        // Call your refresh endpoint
+        const refreshResponse = await axiosInstance.post(
+          API_ENDPOINTS.auth.refresh,
+          {},
+          { withCredentials: true }
+        );
+        const newAccessToken = refreshResponse.data.accessToken;
+        if (newAccessToken) {
+          useAuthStore.getState().setAccessToken(newAccessToken);
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          return axiosInstance(originalRequest);
+        } else {
+          useAuthStore.getState().logout();
+        }
+      } catch (refreshError) {
+        useAuthStore.getState().logout();
+        return Promise.reject(refreshError);
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // API Client
 export const apiClient = {
-  async request(endpoint, options = {}) {
-    const url = `${API_CONFIG.baseURL}${endpoint}`;
-    const config = {
-      ...API_CONFIG,
-      ...options,
-      headers: {
-        ...API_CONFIG.headers,
-        ...options.headers,
-      },
-      credentials: "include",
-    };
-
-    try {
-      const response = await fetch(url, config);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Something went wrong");
-      }
-
-      return data;
-    } catch (error) {
-      console.error("API Request Error:", error);
-      throw error;
-    }
-  },
-
-  // HTTP Methods
-  get(endpoint, options = {}) {
-    return this.request(endpoint, { ...options, method: "GET" });
-  },
-
-  post(endpoint, data, options = {}) {
-    return this.request(endpoint, {
-      ...options,
-      method: "POST",
-      body: JSON.stringify(data),
-    });
-  },
-
-  put(endpoint, data, options = {}) {
-    return this.request(endpoint, {
-      ...options,
-      method: "PUT",
-      body: JSON.stringify(data),
-    });
-  },
-
-  patch(endpoint, data, options = {}) {
-    return this.request(endpoint, {
-      ...options,
-      method: "PATCH",
-      body: JSON.stringify(data),
-    });
-  },
-
-  delete(endpoint, options = {}) {
-    return this.request(endpoint, { ...options, method: "DELETE" });
-  },
+  get: (url, config = {}) =>
+    axiosInstance.get(url, config).then((res) => res.data),
+  post: (url, data = {}, config = {}) =>
+    axiosInstance.post(url, data, config).then((res) => res.data),
+  put: (url, data = {}, config = {}) =>
+    axiosInstance.put(url, data, config).then((res) => res.data),
+  patch: (url, data = {}, config = {}) =>
+    axiosInstance.patch(url, data, config).then((res) => res.data),
+  delete: (url, config = {}) =>
+    axiosInstance.delete(url, config).then((res) => res.data),
 };
 
 export default apiClient;

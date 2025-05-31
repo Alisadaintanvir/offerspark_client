@@ -1,11 +1,10 @@
-import apiClient, { API_ENDPOINTS } from "../../../lib/api";
+import apiClient from "../../../lib/apiClient";
+import API_ENDPOINTS from "../../../lib/apiEndpoints";
 
 export const fetchUsers = async () => {
-  const response = await apiClient.get(API_ENDPOINTS.user.list);
-  return response.data;
+  return await apiClient.get(API_ENDPOINTS.user.list);
 };
 
 export const createUser = async (userData) => {
-  const response = await apiClient.post(API_ENDPOINTS.user.create, userData);
-  return response.data;
+  return await apiClient.post(API_ENDPOINTS.user.create, userData);
 };

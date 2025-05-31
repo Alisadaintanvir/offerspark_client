@@ -54,6 +54,7 @@ const SidebarNav = () => {
       <div className="p-4">
         <ul className="space-y-1">
           {navItems.filter(canView).map((item) => {
+            console.log("item", item);
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
 
