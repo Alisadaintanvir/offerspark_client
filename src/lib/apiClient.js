@@ -32,14 +32,20 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+    // Don't try to refresh token if the error is from login or refresh itself
+    const isAuthRoute =
+      originalRequest.url.includes(API_ENDPOINTS.auth.login) ||
+      originalRequest.url.includes(API_ENDPOINTS.auth.refresh);
+
     if (
       error.response &&
       error.response.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !isAuthRoute
     ) {
       originalRequest._retry = true;
       try {
-        // Call your refresh endpoint
         const refreshResponse = await axiosInstance.post(
           API_ENDPOINTS.auth.refresh,
           {},
@@ -57,6 +63,10 @@ axiosInstance.interceptors.response.use(
         useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       }
+    }
+    // Propagate backend error message if available
+    if (error.response && error.response.data && error.response.data.message) {
+      error.message = error.response.data.message;
     }
     return Promise.reject(error);
   }

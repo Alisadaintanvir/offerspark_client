@@ -33,7 +33,8 @@ const LoginPage = () => {
       const from = location.state?.from?.pathname || "/dashboard";
       navigate(from, { replace: true });
     } catch (error) {
-      setError(error.message || "Login failed. Please try again.");
+      // Show backend error message if available, otherwise a generic message
+      setError(error.message || "Invalid email or password. Please try again.");
       console.error("Login error:", error);
     } finally {
       setLoading(false);
