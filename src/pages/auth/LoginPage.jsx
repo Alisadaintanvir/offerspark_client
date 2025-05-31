@@ -21,13 +21,13 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const user = await apiClient.post(API_ENDPOINTS.auth.login, {
+      const response = await apiClient.post(API_ENDPOINTS.auth.login, {
         email,
         password,
       });
 
       setIsAuthenticated(true);
-      setUser(user);
+      setUser(response.data);
 
       // Redirect to the attempted page or dashboard
       const from = location.state?.from?.pathname || "/dashboard";
