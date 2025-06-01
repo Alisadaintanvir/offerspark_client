@@ -7,6 +7,7 @@ import {
   updateRole,
   deleteRole,
 } from "../services/roleService";
+import RoleCard from "../components/RoleCard";
 
 const RolesPage = () => {
   const [roles, setRoles] = useState([]);
@@ -25,8 +26,8 @@ const RolesPage = () => {
   useEffect(() => {
     const loadPermissions = async () => {
       try {
-        const data = await fetchPermissions();
-        setPermissions(data);
+        const result = await fetchPermissions();
+        setPermissions(result.data);
       } catch (err) {
         setError("Failed to fetch permissions. Please try again later.");
         console.error("Error loading permissions:", err);
@@ -41,8 +42,8 @@ const RolesPage = () => {
     const loadRoles = async () => {
       try {
         setLoading(true);
-        const data = await fetchRoles();
-        setRoles(data);
+        const result = await fetchRoles();
+        setRoles(result.data);
       } catch (err) {
         console.error("Error loading roles:", err);
       } finally {
@@ -351,71 +352,13 @@ const RolesPage = () => {
       {/* Roles List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {roles.map((role) => (
-          <div
+          <RoleCard
             key={role._id}
-            className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
-          >
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">
-                    {role.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {role.description}
-                  </p>
-                </div>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => handleEditRole(role)}
-                    className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                  >
-                    <Shield size={20} />
-                  </button>
-                  <button
-                    onClick={() => handleDeleteRole(role._id)}
-                    className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={20} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                {Object.entries(getPermissionGroups()).map(
-                  ([type, permissions]) => {
-                    const rolePermissions = permissions.filter((p) =>
-                      role.permissions.includes(p.code)
-                    );
-                    if (rolePermissions.length === 0) return null;
-
-                    return (
-                      <div key={type} className="space-y-1">
-                        <h4 className="text-sm font-medium text-gray-700">
-                          {type}
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {rolePermissions.map((permission) => (
-                            <span
-                              key={permission.code}
-                              className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                            >
-                              <Check size={12} className="mr-1" />
-                              {permission.label}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  }
-                )}
-              </div>
-
-              <div className="mt-4 pt-4 border-t text-xs text-gray-500">
-                Created: {new Date(role.createdAt).toLocaleDateString()}
-              </div>
-            </div>
-          </div>
+            role={role}
+            permissionGroups={getPermissionGroups()}
+            onEdit={handleEditRole}
+            onDelete={handleDeleteRole}
+          />
         ))}
       </div>
     </div>

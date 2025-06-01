@@ -19,8 +19,8 @@ export const useAuthStore = create((set) => ({
 
   checkAuth: async () => {
     try {
-      const user = await apiClient.get(API_ENDPOINTS.auth.me);
-      set({ user: user.data, isAuthenticated: true, isLoading: false });
+      const result = await apiClient.get(API_ENDPOINTS.auth.me);
+      set({ user: result.data, isAuthenticated: true, isLoading: false });
     } catch (error) {
       console.error("Authentication check failed:", error);
       set({ isAuthenticated: false, isLoading: false });

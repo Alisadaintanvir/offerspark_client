@@ -55,6 +55,7 @@ axiosInstance.interceptors.response.use(
         if (newAccessToken) {
           useAuthStore.getState().setAccessToken(newAccessToken);
           originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+          originalRequest.withCredentials = true;
           return axiosInstance(originalRequest);
         } else {
           useAuthStore.getState().logout();

@@ -25,8 +25,8 @@ const UsersPage = () => {
     const loadUsers = async () => {
       try {
         setLoading(true);
-        const data = await fetchUsers();
-        setUsers(data);
+        const result = await fetchUsers();
+        setUsers(result.data);
       } catch (err) {
         setError("Failed to fetch users. Please try again later.");
         console.error("Error fetching users:", err);
@@ -40,8 +40,8 @@ const UsersPage = () => {
   useEffect(() => {
     const loadRoles = async () => {
       try {
-        const data = await fetchRoles();
-        setRoles(data);
+        const result = await fetchRoles();
+        setRoles(result.data);
       } catch {
         // Optionally handle error
       }
