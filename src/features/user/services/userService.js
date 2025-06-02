@@ -8,3 +8,7 @@ export const fetchUsers = async () => {
 export const createUser = async (userData) => {
   return await apiClient.post(API_ENDPOINTS.user.create, userData);
 };
+
+export const deleteUser = async (userId) => {
+  return await apiClient.delete(API_ENDPOINTS.user.delete(userId));
+};

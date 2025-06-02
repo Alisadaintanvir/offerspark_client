@@ -8,6 +8,7 @@ const AddUserModal = ({
   roles,
   newUser,
   onInputChange,
+  formLoading,
 }) => {
   if (!open) return null;
   return (
@@ -23,6 +24,7 @@ const AddUserModal = ({
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors p-2 hover:bg-gray-100 rounded-full"
+            disabled={formLoading}
           >
             <X size={24} />
           </button>
@@ -41,6 +43,7 @@ const AddUserModal = ({
                 required
                 placeholder="Enter full name"
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={formLoading}
               />
             </div>
             <div className="space-y-2">
@@ -55,6 +58,7 @@ const AddUserModal = ({
                 required
                 placeholder="Enter email address"
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={formLoading}
               />
             </div>
             <div className="space-y-2">
@@ -69,6 +73,7 @@ const AddUserModal = ({
                 required
                 placeholder="Enter phone number"
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={formLoading}
               />
             </div>
             <div className="space-y-2">
@@ -83,6 +88,7 @@ const AddUserModal = ({
                 required
                 placeholder="Enter password"
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={formLoading}
               />
             </div>
             <div className="space-y-2">
@@ -95,6 +101,7 @@ const AddUserModal = ({
                 onChange={onInputChange}
                 required
                 className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                disabled={formLoading}
               >
                 <option value="" disabled>
                   Select a role
@@ -115,6 +122,7 @@ const AddUserModal = ({
               checked={newUser.isActive}
               onChange={onInputChange}
               className="h-5 w-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded transition-colors"
+              disabled={formLoading}
             />
             <div>
               <label className="block text-sm font-medium text-gray-900">
@@ -131,15 +139,21 @@ const AddUserModal = ({
               type="button"
               onClick={onClose}
               className="px-6 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              disabled={formLoading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="px-6 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center"
+              disabled={formLoading}
             >
-              <Plus size={20} className="mr-2" />
-              Add Member
+              {formLoading ? (
+                <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></span>
+              ) : (
+                <Plus size={20} className="mr-2" />
+              )}
+              {formLoading ? "Adding..." : "Add Member"}
             </button>
           </div>
         </form>

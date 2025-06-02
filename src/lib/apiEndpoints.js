@@ -13,7 +13,7 @@ export const API_ENDPOINTS = {
     list: "/users",
     create: "/users",
     update: "/users/:id",
-    delete: "/users/:id",
+    delete: (id) => `/users/${id}`,
   },
   permission: {
     list: "/permissions",

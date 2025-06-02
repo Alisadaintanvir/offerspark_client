@@ -3,12 +3,14 @@ import { Search, Plus } from "lucide-react";
 import { fetchRoles } from "../../roles/services/roleService";
 import AddUserModal from "../components/AddUserModal";
 import UsersTable from "../components/UsersTable";
-import { fetchUsers, createUser } from "../services/userService";
+import { fetchUsers, createUser, deleteUser } from "../services/userService";
+import { useAuthStore } from "../../../store/authStore";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -20,6 +22,8 @@ const UsersPage = () => {
     isActive: true,
     role: "",
   });
+
+  const currentUser = useAuthStore((state) => state.user);
 
   useEffect(() => {
     const loadUsers = async () => {
@@ -49,17 +53,26 @@ const UsersPage = () => {
     loadRoles();
   }, []);
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter((user) => user.id !== userId));
+      try {
+        await deleteUser(userId);
+        setUsers((prev) => prev.filter((user) => user._id !== userId));
+      } catch (err) {
+        alert("Failed to delete user.");
+        console.error("Error deleting user:", err);
+      }
     }
   };
 
   const handleAddUser = async (e) => {
     e.preventDefault();
+    setFormLoading(true);
     try {
       await createUser(newUser);
-      setUsers((prev) => [...prev, newUser]);
+      // Refetch users to get the correct role object
+      const result = await fetchUsers();
+      setUsers(result.data);
       setShowAddForm(false);
       setNewUser({
         full_name: "",
@@ -72,6 +85,8 @@ const UsersPage = () => {
     } catch (err) {
       console.error("Error adding user:", err);
       alert("Failed to add user.");
+    } finally {
+      setFormLoading(false);
     }
   };
 
@@ -130,6 +145,7 @@ const UsersPage = () => {
         roles={roles}
         newUser={newUser}
         onInputChange={handleInputChange}
+        formLoading={formLoading}
       />
 
       <div className="mb-6">
@@ -148,7 +164,11 @@ const UsersPage = () => {
         </div>
       </div>
 
-      <UsersTable users={filteredUsers} onDelete={handleDeleteUser} />
+      <UsersTable
+        users={filteredUsers}
+        onDelete={handleDeleteUser}
+        currentUser={currentUser}
+      />
     </div>
   );
 };
